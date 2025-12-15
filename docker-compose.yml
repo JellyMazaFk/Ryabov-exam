@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: vuln_web_app
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - APACHE_RUN_USER=www-data
+      - APACHE_RUN_GROUP=www-data
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - vuln_network
+
+  db:
+    image: mysql:8.0
+    container_name: vuln_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: vuln_app
+    ports:
+      - "3306:3306"
+    networks:
+      - vuln_network
+    volumes:
+      - db_data:/var/lib/mysql
+
+networks:
+  vuln_network:
+    driver: bridge
+
+volumes:
+  db_data:
